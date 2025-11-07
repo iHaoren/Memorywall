@@ -1,4 +1,4 @@
-import Logo from '/favicon.ico'; // pastikan path sesuai
+import Logo from '/MyLogo.webp'; // pastikan path sesuai
 
 const About = () => {
   const members = [
@@ -40,13 +40,13 @@ const About = () => {
         </p>
 
         {/* Member list */}
-        <div className="mt-8 text-left sm:text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+        <div className="mt-8 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Thanks to:
           </h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <ul className="list-none text-teal-600 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-items-center">
             {members.map((member, index) => (
-              <li key={index} className="text-sm md:text-base">{member}</li>
+              <li key={index} className="text-sm md:text-base text-center">{member}</li>
             ))}
           </ul>
         </div>
