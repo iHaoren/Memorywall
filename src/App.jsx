@@ -78,9 +78,15 @@ function App() {
                   <h3 className="text-lg md:text-xl font-semibold text-gray-100 mb-2">
                     {memories.nama || memories.caption}
                   </h3>
-                  <p className="text-gray-200 mb-4 text-sm md:text-base grow">
-                    {memories.desk || memories.caption}
-                  </p>
+                  {memories.desk ? (
+                    <p className="text-gray-200 mb-4 text-sm md:text-base grow">
+                      {memories.desk}
+                    </p>
+                  ) : (
+                    <p className="text-gray-200 mb-4 text-sm md:text-base grow">
+                      {memories.caption}
+                    </p>
+                  )}
                   <div className="mt-auto">
                     <p className="text-sm text-gray-400">
                       Uploaded by {memories.uploader || "Anonymous"} •{" "}

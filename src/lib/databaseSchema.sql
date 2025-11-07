@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS memories (
   image_url TEXT NOT NULL,
   image_path TEXT NOT NULL,
   caption TEXT,
+  desk TEXT,
   uploader TEXT DEFAULT 'Your nickname',
   uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

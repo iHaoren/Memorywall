@@ -3,7 +3,7 @@ import { supabase } from "./supabaseClient";
 // Upload file to storage and insert metadata to DB
 export async function uploadMemory(
   file,
-  { caption = "", uploader = "Anonymous" } = {}
+  { caption = "", desk = "", uploader = "Anonymous" } = {}
 ) {
   const fileName = `${Date.now()}_${file.name}`;
 
@@ -20,7 +20,9 @@ export async function uploadMemory(
 
   const { data, error } = await supabase
     .from("memories")
-    .insert([{ image_url: imageUrl, image_path: fileName, caption, uploader }])
+    .insert([
+      { image_url: imageUrl, image_path: fileName, caption, desk, uploader },
+    ])
     .select();
 
   if (error) throw error;

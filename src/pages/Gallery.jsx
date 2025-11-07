@@ -10,6 +10,7 @@ const Gallery = () => {
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editCaption, setEditCaption] = useState("");
+  const [editDesk, setEditDesk] = useState("");
   const [editUploader, setEditUploader] = useState("");
   const [showComments, setShowComments] = useState({});
 
@@ -47,12 +48,17 @@ const Gallery = () => {
   function startEdit(memory) {
     setEditingId(memory.id);
     setEditCaption(memory.caption || "");
+    setEditDesk(memory.desk || "");
     setEditUploader(memory.uploader || "");
   }
 
   async function saveEdit(memory) {
     try {
-      const updates = { caption: editCaption, uploader: editUploader };
+      const updates = {
+        caption: editCaption,
+        desk: editDesk,
+        uploader: editUploader,
+      };
       const updated = await updateMemory(memory.id, updates);
       setMemories((prev) =>
         prev.map((m) => (m.id === memory.id ? { ...m, ...updated } : m))
@@ -110,6 +116,13 @@ const Gallery = () => {
                     className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
                     placeholder="Edit caption"
                   />
+                  <textarea
+                    value={editDesk}
+                    onChange={(e) => setEditDesk(e.target.value)}
+                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
+                    placeholder="Edit deskripsi"
+                    rows="3"
+                  />
                   <input
                     value={editUploader}
                     onChange={(e) => setEditUploader(e.target.value)}
@@ -136,6 +149,11 @@ const Gallery = () => {
                   <h3 className="text-lg font-semibold text-gray-100 mb-2">
                     {memory.caption || "Tanpa Judul"}
                   </h3>
+                  {memory.desk && (
+                    <p className="text-gray-200 mb-4 text-sm md:text-base">
+                      {memory.desk}
+                    </p>
+                  )}
                   <p className="text-sm text-gray-400 mb-4 mt-auto">
                     Uploaded by{" "}
                     <span className="text-gray-300">
