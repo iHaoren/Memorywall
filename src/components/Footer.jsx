@@ -1,10 +1,10 @@
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-teal-300 mt-32 py-8">
+    <footer className="bg-gray-900 text-teal-300 mt-16 md:mt-32 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center gap-4">
         {/* Created by Instagram */}
         <p className="text-sm text-center">
-          Created by{' '}
+          Created by{" "}
           <a
             href="https://instagram.com/ibnuhaoren"
             target="_blank"

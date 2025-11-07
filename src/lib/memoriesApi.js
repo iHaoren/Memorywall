@@ -59,3 +59,38 @@ export async function deleteMemory(id, imagePath) {
   if (error) throw error;
   return true;
 }
+
+// Comments API functions
+export async function fetchComments(memoryId) {
+  const { data, error } = await supabase
+    .from("comments")
+    .select("*")
+    .eq("memory_id", memoryId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function addComment(
+  memoryId,
+  commentText,
+  commenter = "Anonymous"
+) {
+  const { data, error } = await supabase
+    .from("comments")
+    .insert([{ memory_id: memoryId, comment_text: commentText, commenter }])
+    .select();
+
+  if (error) throw error;
+  return data[0];
+}
+
+export async function deleteComment(commentId) {
+  const { error } = await supabase
+    .from("comments")
+    .delete()
+    .eq("id", commentId);
+  if (error) throw error;
+  return true;
+}

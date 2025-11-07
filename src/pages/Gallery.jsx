@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
 import UploadForm from "../components/UploadForm";
-import { memoryList } from "../data.js";
+import CommentSection from "../components/CommentSection";
 import { fetchMemories, updateMemory, deleteMemory } from "../lib/memoriesApi";
+import "animate.css";
 
 const Gallery = () => {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editCaption, setEditCaption] = useState("");
+  const [editUploader, setEditUploader] = useState("");
+  const [showComments, setShowComments] = useState({});
 
   async function load() {
-    setLoading(true);
-    setError(null);
     try {
+      setLoading(true);
+      setError(null);
       const data = await fetchMemories();
-      console.debug("fetchMemories ->", data);
-      // if remote DB is empty, fall back to local sample data so the UI shows something
-      if (Array.isArray(data) && data.length > 0) {
-        setMemories(data);
-      } else {
-        console.info("No remote memories found — using local sample data.");
-        setMemories(memoryList);
-      }
+      setMemories(data);
     } catch (err) {
-      console.error("fetchMemories error ->", err);
       setError(err.message || String(err));
     } finally {
       setLoading(false);
@@ -34,32 +31,22 @@ const Gallery = () => {
   }, []);
 
   async function handleDelete(memory) {
-    const ok = window.confirm(
+    const ok = confirm(
       "Hapus kenangan ini? Tindakan ini tidak dapat dibatalkan."
     );
     if (!ok) return;
     try {
-      // optimis update UI
-      setMemories((s) => s.filter((m) => m.id !== memory.id));
-      await deleteMemory(
-        memory.id,
-        memory.image_path || memory.imagePath || memory.imagePath
-      );
+      setMemories((prev) => prev.filter((m) => m.id !== memory.id));
+      await deleteMemory(memory.id, memory.image_path);
     } catch (err) {
-      // jika error, reload list
-      console.error(err);
-      await load();
       alert("Gagal menghapus: " + (err.message || err));
+      load();
     }
   }
 
-  const [editingId, setEditingId] = useState(null);
-  const [editCaption, setEditCaption] = useState("");
-  const [editUploader, setEditUploader] = useState("");
-
-  async function startEdit(memory) {
+  function startEdit(memory) {
     setEditingId(memory.id);
-    setEditCaption(memory.caption || memory.desk || "");
+    setEditCaption(memory.caption || "");
     setEditUploader(memory.uploader || "");
   }
 
@@ -67,24 +54,23 @@ const Gallery = () => {
     try {
       const updates = { caption: editCaption, uploader: editUploader };
       const updated = await updateMemory(memory.id, updates);
-      setMemories((s) =>
-        s.map((m) => (m.id === memory.id ? { ...m, ...updated } : m))
+      setMemories((prev) =>
+        prev.map((m) => (m.id === memory.id ? { ...m, ...updated } : m))
       );
       setEditingId(null);
     } catch (err) {
-      console.error(err);
-      alert("Gagal menyimpan perubahan: " + (err.message || err));
+      alert("Gagal menyimpan: " + (err.message || err));
     }
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+    <main className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold text-teal-600 text-center mb-10 animate__animated animate__fadeInDown">
         Memory Gallery
       </h1>
 
       <section className="mb-10">
-        <h2 className="text-lg font-medium text-gray-700 text-center mb-4">
+        <h2 className="text-lg font-medium text-gray-300 text-center mb-4">
           Upload a new memory
         </h2>
         <div className="max-w-2xl mx-auto">
@@ -92,106 +78,107 @@ const Gallery = () => {
         </div>
       </section>
 
-      {loading && <p className="text-center text-gray-600">Loading...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+      {loading && <p className="text-center text-gray-400">Loading...</p>}
+      {error && <p className="text-center text-red-400">{error}</p>}
 
-      <p className="text-center text-teal-600 m-12 text-lg animate__animated animate__fadeInUp">
-        Add new memories  ^_____^
-      </p>
+      {!loading && memories.length === 0 && (
+        <p className="text-center text-gray-500 italic animate__animated animate__fadeInUp">
+          Belum ada kenangan 😢
+        </p>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {memories.map((memory) => (
           <article
             key={memory.id}
-            className="bg-gray-900 rounded-xl shadow-gray-900 shadow-md overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+            className="bg-gray-900 rounded-2xl shadow-md shadow-gray-800 overflow-hidden flex flex-col animate__animated animate__fadeInUp"
           >
             <div className="relative">
               <img
-                src={memory.image_url || memory.gambar}
-                alt={memory.nama || memory.caption || "Memory"}
-                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
+                src={memory.image_url}
+                alt={memory.caption || "Memory"}
+                className="w-full h-56 object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
 
-            <div className="p-6 space-y-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-100 mb-2">
-                    {memory.nama || memory.caption}
-                  </h3>
-                </div>
-                <div className="ml-4 flex items-center gap-2">
-                  {editingId === memory.id ? (
-                    <>
-                      <button
-                        onClick={() => saveEdit(memory)}
-                        className="text-sm px-3 py-1 bg-teal-600 text-white rounded"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="text-sm px-3 py-1 border border-gray-700 text-gray-100 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => startEdit(memory)}
-                        className="text-sm px-3 py-1 border border-gray-700 text-gray-100 rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(memory)}
-                        className="text-sm px-3 py-1 text-red-400 border border-transparent rounded"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-
+            <div className="p-5 flex flex-col flex-1">
               {editingId === memory.id ? (
-                <div className="mt-4 space-y-3">
+                <div className="space-y-3 mb-4">
                   <input
                     value={editCaption}
                     onChange={(e) => setEditCaption(e.target.value)}
-                    className="w-full px-3 py-2 border rounded bg-gray-800 text-gray-100"
+                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
+                    placeholder="Edit caption"
                   />
                   <input
                     value={editUploader}
                     onChange={(e) => setEditUploader(e.target.value)}
-                    className="w-full px-3 py-2 border rounded bg-gray-800 text-gray-100"
+                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
+                    placeholder="Edit uploader"
                   />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => saveEdit(memory)}
+                      className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="flex-1 border border-gray-600 text-gray-300 py-2 rounded hover:bg-gray-800"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
-                  {memory.desk && (
-                    <p className="text-gray-200 mb-4 leading-relaxed">
-                      {memory.desk}
-                    </p>
-                  )}
-                  {memory.caption && (
-                    <p className="text-gray-200 mb-4 leading-relaxed">
-                      {memory.caption}
-                    </p>
-                  )}
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-400">
-                      Uploaded by {memory.uploader || "Anonymous"} •{" "}
-                      {memory.uploaded_at
-                        ? new Date(memory.uploaded_at).toLocaleDateString()
-                        : memory.date
-                        ? new Date(memory.date).toLocaleDateString()
-                        : ""}
-                    </p>
+                  <h3 className="text-lg font-semibold text-gray-100 mb-2">
+                    {memory.caption || "Tanpa Judul"}
+                  </h3>
+                  <p className="text-sm text-gray-400 mb-4 mt-auto">
+                    Uploaded by{" "}
+                    <span className="text-gray-300">
+                      {memory.uploader || "Anonymous"}
+                    </span>{" "}
+                    •{" "}
+                    {memory.uploaded_at
+                      ? new Date(memory.uploaded_at).toLocaleDateString()
+                      : ""}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => startEdit(memory)}
+                      className="flex-1 border-2 border-gray-800 text-gray-300 py-2 rounded bg-teal-600 hover:bg-gray-800"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(memory)}
+                      className="flex-1 text-red-400 py-2 rounded hover:bg-gray-800"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </>
               )}
+
+              <div className="mt-4">
+                <button
+                  onClick={() =>
+                    setShowComments((prev) => ({
+                      ...prev,
+                      [memory.id]: !prev[memory.id],
+                    }))
+                  }
+                  className="text-teal-400 hover:text-teal-300 text-sm font-medium"
+                >
+                  {showComments[memory.id] ? "Hide Comments" : "Show Comments"}
+                </button>
+                {showComments[memory.id] && (
+                  <CommentSection memoryId={memory.id} />
+                )}
+              </div>
             </div>
           </article>
         ))}

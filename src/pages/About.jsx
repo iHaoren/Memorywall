@@ -1,4 +1,4 @@
-import Logo from '../assets/favicon.svg'; // pastikan path sesuai
+import Logo from '/favicon.ico'; // pastikan path sesuai
 
 const About = () => {
   const members = [
@@ -42,18 +42,18 @@ const About = () => {
         {/* Member list */}
         <div className="mt-8 text-left sm:text-center">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Thanks for:
+            Thanks to:
           </h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-1">
+          <ul className="list-disc list-inside text-gray-700 space-y-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {members.map((member, index) => (
-              <li key={index}>{member}</li>
+              <li key={index} className="text-sm md:text-base">{member}</li>
             ))}
           </ul>
         </div>
 
         {/* Logo di paling bawah */}
         <div className="mt-10 flex justify-center">
-          <img src={Logo} alt="Logo" className="h-32 object-contain" />
+          <img src={Logo} alt="Logo" className="h-24 sm:h-32 object-contain" />
         </div>
       </section>
     </main>
