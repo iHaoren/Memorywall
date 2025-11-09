@@ -43,53 +43,53 @@ export default function UploadForm({ onUploaded }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 max-w-xl mx-auto">
       <label className="block">
-        <span className="text-sm font-medium text-gray-700">Upload Photo</span>
+        <span className="text-sm font-medium text-gray-300 pr-2">Upload Photo:</span>
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="mt-2"
+          className="mt-2 text-cyan-400 text-sm"
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-gray-700">Caption</span>
+        <span className="text-sm font-medium text-gray-300">Caption:</span>
         <input
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
-          placeholder="Write a short caption..."
+          placeholder="Tulis caption singkat..."
           className="w-full mt-2 px-3 py-2 border rounded"
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-gray-700">Description</span>
+        <span className="text-sm font-medium text-gray-300">Description:</span>
         <textarea
           value={desk}
           onChange={(e) => setDesk(e.target.value)}
-          placeholder="Add a description..."
+          placeholder="Tambah deskripsi kenangan tentang gambar ini..."
           className="w-full mt-2 px-3 py-2 border rounded"
           rows="3"
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-gray-700">Uploader Name</span>
+        <span className="text-sm font-medium text-gray-300">Uploader Name:</span>
         <input
           value={uploader}
           onChange={(e) => setUploader(e.target.value)}
-          placeholder="Your name"
+          placeholder="Nama kamu atau terserah..."
           className="w-full mt-2 px-3 py-2 border rounded"
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-gray-700">Upload PIN</span>
+        <span className="text-sm font-medium text-gray-300">Upload PIN:</span>
         <input
           type="password"
           value={pin}
           onChange={(e) => setPin(e.target.value)}
-          placeholder="Enter upload PIN"
+          placeholder="Masukkan PIN upload"
           className="w-full mt-2 px-3 py-2 border rounded"
         />
       </label>

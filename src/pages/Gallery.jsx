@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import UploadForm from "../components/UploadForm";
 import CommentSection from "../components/CommentSection";
-import { fetchMemories, updateMemory, deleteMemory } from "../lib/memoriesApi";
+import { fetchMemories, deleteMemory } from "../lib/memoriesApi";
 import "animate.css";
 
 const Gallery = () => {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [editCaption, setEditCaption] = useState("");
-  const [editDesk, setEditDesk] = useState("");
-  const [editUploader, setEditUploader] = useState("");
-  const [showComments, setShowComments] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMemory, setModalMemory] = useState(null);
 
   async function load() {
     try {
@@ -31,47 +28,9 @@ const Gallery = () => {
     load();
   }, []);
 
-  async function handleDelete(memory) {
-    const ok = confirm(
-      "Hapus kenangan ini? Tindakan ini tidak dapat dibatalkan."
-    );
-    if (!ok) return;
-    try {
-      setMemories((prev) => prev.filter((m) => m.id !== memory.id));
-      await deleteMemory(memory.id, memory.image_path);
-    } catch (err) {
-      alert("Gagal menghapus: " + (err.message || err));
-      load();
-    }
-  }
-
-  function startEdit(memory) {
-    setEditingId(memory.id);
-    setEditCaption(memory.caption || "");
-    setEditDesk(memory.desk || "");
-    setEditUploader(memory.uploader || "");
-  }
-
-  async function saveEdit(memory) {
-    try {
-      const updates = {
-        caption: editCaption,
-        desk: editDesk,
-        uploader: editUploader,
-      };
-      const updated = await updateMemory(memory.id, updates);
-      setMemories((prev) =>
-        prev.map((m) => (m.id === memory.id ? { ...m, ...updated } : m))
-      );
-      setEditingId(null);
-    } catch (err) {
-      alert("Gagal menyimpan: " + (err.message || err));
-    }
-  }
-
   return (
     <main className="container mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-teal-600 text-center mb-10 animate__animated animate__fadeInDown">
+      <h1 className="text-3xl font-bold text-teal-300 text-center mb-10 animate__animated animate__fadeInDown">
         Memory Gallery
       </h1>
 
@@ -97,7 +56,11 @@ const Gallery = () => {
         {memories.map((memory) => (
           <article
             key={memory.id}
-            className="bg-gray-900 rounded-2xl shadow-md shadow-gray-800 overflow-hidden flex flex-col animate__animated animate__fadeInUp"
+            className="bg-gray-900 rounded-2xl shadow-md shadow-gray-800 overflow-hidden flex flex-col animate__animated animate__fadeInUp cursor-pointer"
+            onClick={() => {
+              setModalMemory(memory);
+              setModalOpen(true);
+            }}
           >
             <div className="relative">
               <img
@@ -106,101 +69,76 @@ const Gallery = () => {
                 className="w-full h-56 object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
-
-            <div className="p-5 flex flex-col flex-1">
-              {editingId === memory.id ? (
-                <div className="space-y-3 mb-4">
-                  <input
-                    value={editCaption}
-                    onChange={(e) => setEditCaption(e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
-                    placeholder="Edit caption"
-                  />
-                  <textarea
-                    value={editDesk}
-                    onChange={(e) => setEditDesk(e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
-                    placeholder="Edit deskripsi"
-                    rows="3"
-                  />
-                  <input
-                    value={editUploader}
-                    onChange={(e) => setEditUploader(e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-gray-800 text-gray-100 border border-gray-700"
-                    placeholder="Edit uploader"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => saveEdit(memory)}
-                      className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="flex-1 border border-gray-600 text-gray-300 py-2 rounded hover:bg-gray-800"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h3 className="text-lg font-semibold text-gray-100 mb-2">
-                    {memory.caption || "Tanpa Judul"}
-                  </h3>
-                  {memory.desk && (
-                    <p className="text-gray-200 mb-4 text-sm md:text-base">
-                      {memory.desk}
-                    </p>
-                  )}
-                  <p className="text-sm text-gray-400 mb-4 mt-auto">
-                    Uploaded by{" "}
-                    <span className="text-gray-300">
-                      {memory.uploader || "Anonymous"}
-                    </span>{" "}
-                    •{" "}
-                    {memory.uploaded_at
-                      ? new Date(memory.uploaded_at).toLocaleDateString()
-                      : ""}
-                  </p>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => startEdit(memory)}
-                      className="flex-1 border-2 border-gray-800 text-gray-300 py-2 rounded bg-teal-600 hover:bg-gray-800"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(memory)}
-                      className="flex-1 text-red-400 py-2 rounded hover:bg-gray-800"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </>
-              )}
-
-              <div className="mt-4">
-                <button
-                  onClick={() =>
-                    setShowComments((prev) => ({
-                      ...prev,
-                      [memory.id]: !prev[memory.id],
-                    }))
-                  }
-                  className="text-teal-400 hover:text-teal-300 text-sm font-medium"
-                >
-                  {showComments[memory.id] ? "Hide Comments" : "Show Comments"}
-                </button>
-                {showComments[memory.id] && (
-                  <CommentSection memoryId={memory.id} />
-                )}
-              </div>
-            </div>
           </article>
         ))}
       </div>
+
+      {/* Modal */}
+      {modalOpen && modalMemory && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ×
+            </button>
+            <div className="flex flex-col md:flex-row">
+              <div className="md:w-1/2">
+                <img
+                  src={modalMemory.image_url}
+                  alt={modalMemory.caption || "Memory"}
+                  className="w-full h-64 md:h-full object-cover"
+                />
+              </div>
+              <div className="md:w-1/2 p-6 overflow-y-auto max-h-96 md:max-h-none">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl md:text-2xl font-semibold text-gray-100">
+                    {modalMemory.caption || "Tanpa Judul"}
+                  </h3>
+                  <button
+                    onClick={async () => {
+                      if (
+                        confirm(
+                          "Yakin mau dihapus? Permanen lho..."
+                        )
+                      ) {
+                        try {
+                          await deleteMemory(
+                            modalMemory.id,
+                            modalMemory.image_path
+                          );
+                          setMemories((prev) =>
+                            prev.filter((m) => m.id !== modalMemory.id)
+                          );
+                          setModalOpen(false);
+                        } catch (err) {
+                          alert("Gagal menghapus: " + (err.message || err));
+                        }
+                      }
+                    }}
+                    className="text-red-400 hover:text-red-300 text-sm font-medium"
+                  >
+                    Delete
+                  </button>
+                </div>
+                {modalMemory.desk && (
+                  <p className="text-gray-200 mb-4 text-sm md:text-base">
+                    {modalMemory.desk}
+                  </p>
+                )}
+                <p className="text-sm text-gray-400 mb-6">
+                  Uploaded by {modalMemory.uploader || "Anonymous"} •{" "}
+                  {modalMemory.uploaded_at
+                    ? new Date(modalMemory.uploaded_at).toLocaleDateString()
+                    : ""}
+                </p>
+                <CommentSection memoryId={modalMemory.id} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

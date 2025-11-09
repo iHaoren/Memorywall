@@ -1,19 +1,34 @@
-import Logo from '/MyLogo.webp'; // pastikan path sesuai
+import Logo from "/MyLogo.webp"; // pastikan path sesuai
 
 const About = () => {
   const members = [
-    'Arga', 'Dimas', 'Afandi', 'Harun', 'Chelsea', 'Yasmin', 'Fredy', 'Ludi',
-    'Endah', 'Ilmi', 'Aini', 'Thiflah', 'Ivan', 'Agung', 'P.Adie', 'P.Wahyu',
-    'P.Rizky', 'P.Azka'
+    "Arga",
+    "Dimas",
+    "Afandi",
+    "Harun",
+    "Chelsea",
+    "Yasmin",
+    "Fredy",
+    "Ludi",
+    "Endah",
+    "Ilmi",
+    "Aini",
+    "Thiflah",
+    "Ivan",
+    "Agung",
+    "P.Adie",
+    "P.Wahyu",
+    "P.Rizky",
+    "P.Azka",
   ];
 
   return (
     <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <section className="max-w-3xl mx-auto text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8">
           Tentang Memory Wall
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed sm:leading-loose text-justify sm:text-center">
+        <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed sm:leading-loose text-justify sm:text-center">
           <span className="block mb-4">
             Memory Wall dibuat sebagai tempat sederhana untuk menyimpan kenangan
             selama masa kebersamaan kita di pelatihan PBL BPVP Sidoarjo, mulai
@@ -41,12 +56,12 @@ const About = () => {
 
         {/* Member list */}
         <div className="mt-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Thanks to:
-          </h2>
-          <ul className="list-none text-teal-600 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-items-center">
+          <h2 className="text-xl font-semibold text-white mb-4">Thanks to:</h2>
+          <ul className="list-none text-gray-200 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-items-center">
             {members.map((member, index) => (
-              <li key={index} className="text-sm md:text-base text-center">{member}</li>
+              <li key={index} className="text-sm md:text-base text-center">
+                {member}
+              </li>
             ))}
           </ul>
         </div>

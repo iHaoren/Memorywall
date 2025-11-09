@@ -7,7 +7,9 @@ function App() {
   const [featuredMemories, setFeaturedMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showComments, setShowComments] = useState({});
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMemory, setModalMemory] = useState(null);
 
   useEffect(() => {
     async function loadFeatured() {
@@ -31,12 +33,12 @@ function App() {
     <main className="container mx-auto px-4 py-8">
       {/* Hero Section */}
       <section className="text-center mb-16 relative py-20">
-        <div className="absolute inset-0 bg-teal-600 opacity-25 rounded-3xl shadow-teal-900 shadow-lg"></div>
+        <div className="absolute inset-0 bg-slate-700 opacity-30 rounded-3xl shadow-slate-900 shadow-lg"></div>
         <div className="relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Welcome to Our Memory Wall
           </h1>
-          <p className="text-lg md:text-xl text-gray-800 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             A space where our moments live forever — I try to capture every
             moments.
           </p>
@@ -51,11 +53,11 @@ function App() {
 
       {/* Featured Memories Section */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+        <h2 className="text-3xl font-bold text-white mb-8 text-center">
           Featured Memories
         </h2>
         {loading && (
-          <p className="text-center text-gray-600">
+          <p className="text-center text-gray-300">
             Loading featured memories...
           </p>
         )}
@@ -65,7 +67,11 @@ function App() {
             {featuredMemories.map((memories) => (
               <article
                 key={memories.id}
-                className="bg-gray-900 rounded-xl shadow-gray-900 shadow-md overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col h-full"
+                className="bg-gray-900 rounded-xl shadow-gray-900 shadow-md overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col h-full cursor-pointer"
+                onClick={() => {
+                  setModalMemory(memories);
+                  setModalOpen(true);
+                }}
               >
                 <div className="relative">
                   <img
@@ -74,48 +80,6 @@ function App() {
                     className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="p-4 md:p-6 flex flex-col grow">
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-100 mb-2">
-                    {memories.nama || memories.caption}
-                  </h3>
-                  {memories.desk ? (
-                    <p className="text-gray-200 mb-4 text-sm md:text-base grow">
-                      {memories.desk}
-                    </p>
-                  ) : (
-                    <p className="text-gray-200 mb-4 text-sm md:text-base grow">
-                      {memories.caption}
-                    </p>
-                  )}
-                  <div className="mt-auto">
-                    <p className="text-sm text-gray-400">
-                      Uploaded by {memories.uploader || "Anonymous"} •{" "}
-                      {memories.uploaded_at
-                        ? new Date(memories.uploaded_at).toLocaleDateString()
-                        : memories.date
-                        ? new Date(memories.date).toLocaleDateString()
-                        : ""}
-                    </p>
-                  </div>
-                  <div className="mt-auto">
-                    <button
-                      onClick={() =>
-                        setShowComments((prev) => ({
-                          ...prev,
-                          [memories.id]: !prev[memories.id],
-                        }))
-                      }
-                      className="text-teal-400 hover:text-teal-300 text-sm font-medium"
-                    >
-                      {showComments[memories.id]
-                        ? "Hide Comments"
-                        : "Show Comments"}
-                    </button>
-                    {showComments[memories.id] && (
-                      <CommentSection memoryId={memories.id} />
-                    )}
-                  </div>
-                </div>
               </article>
             ))}
           </div>
@@ -123,12 +87,54 @@ function App() {
         <div className="text-center mt-12">
           <Link
             to="/gallery"
-            className="inline-block border-2 border-[#1e2939] text-gray-800 px-6 md:px-8 py-3 rounded-full font-medium hover:bg-gray-800 hover:text-gray-100 transition-colors duration-200"
+            className="inline-block border-2 border-[#96f7e4] text-teal-200 px-6 md:px-8 py-3 rounded-full font-medium hover:bg-gray-800 hover:text-gray-100 transition-colors duration-200"
           >
             View All Memories
           </Link>
         </div>
       </section>
+
+      {/* Modal */}
+      {modalOpen && modalMemory && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+            >
+              ×
+            </button>
+            <div className="flex flex-col md:flex-row">
+              <div className="md:w-1/2">
+                <img
+                  src={modalMemory.image_url || modalMemory.gambar}
+                  alt={modalMemory.nama || modalMemory.caption || "Memory"}
+                  className="w-full h-64 md:h-full object-cover"
+                />
+              </div>
+              <div className="md:w-1/2 p-6 overflow-y-auto max-h-96 md:max-h-none">
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-100 mb-4">
+                  {modalMemory.nama || modalMemory.caption}
+                </h3>
+                {modalMemory.desk && (
+                  <p className="text-gray-200 mb-4 text-sm md:text-base">
+                    {modalMemory.desk}
+                  </p>
+                )}
+                <p className="text-sm text-gray-400 mb-6">
+                  Uploaded by {modalMemory.uploader || "Anonymous"} •{" "}
+                  {modalMemory.uploaded_at
+                    ? new Date(modalMemory.uploaded_at).toLocaleDateString()
+                    : modalMemory.date
+                    ? new Date(modalMemory.date).toLocaleDateString()
+                    : ""}
+                </p>
+                <CommentSection memoryId={modalMemory.id} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

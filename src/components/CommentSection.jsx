@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchComments, addComment, deleteComment } from "../lib/memoriesApi";
+import { fetchComments, addComment } from "../lib/memoriesApi";
 
 const CommentSection = ({ memoryId }) => {
   const [comments, setComments] = useState([]);
@@ -43,18 +43,6 @@ const CommentSection = ({ memoryId }) => {
     }
   }
 
-  async function handleDeleteComment(commentId) {
-    const ok = window.confirm("Hapus komentar ini?");
-    if (!ok) return;
-    try {
-      await deleteComment(commentId);
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
-    } catch (err) {
-      console.error(err);
-      alert("Gagal menghapus komentar: " + (err.message || err));
-    }
-  }
-
   return (
     <div className="mt-6 border-t border-gray-700 pt-4">
       <h4 className="text-lg font-semibold text-gray-100 mb-4">Comments</h4>
@@ -73,12 +61,6 @@ const CommentSection = ({ memoryId }) => {
                   {new Date(comment.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <button
-                onClick={() => handleDeleteComment(comment.id)}
-                className="text-red-400 hover:text-red-300 text-sm ml-2"
-              >
-                Delete
-              </button>
             </div>
           </div>
         ))}
@@ -89,7 +71,7 @@ const CommentSection = ({ memoryId }) => {
           type="text"
           value={commenter}
           onChange={(e) => setCommenter(e.target.value)}
-          placeholder="Your name (optional)"
+          placeholder="Nama kamu (opsional)"
           className="w-full px-3 py-2 border rounded bg-gray-800 text-gray-100 border-gray-600"
         />
         <div className="flex gap-2">
@@ -97,7 +79,7 @@ const CommentSection = ({ memoryId }) => {
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
+            placeholder="Tulis komentar..."
             className="flex-1 px-3 py-2 border rounded bg-gray-800 text-gray-100 border-gray-600"
             required
           />
