@@ -33,12 +33,12 @@ const Footer = () => {
             <p className="text-xs text-gray-400">
               © 2025 PBL 2 Smart Building • Built with ❤️ by{" "}
               <a
-                href="https://github.com/iHaoren/Memorywall"
+                href="https://www.instagram.com/ibnuhaoren"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-teal-400 hover:text-teal-300 font-medium transition-colors duration-200"
               >
-                iHaoren
+                @ibnuhaoren
               </a>
             </p>
             <p className="text-xs text-gray-500 mt-1">All rights reserved.</p>
