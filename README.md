@@ -15,4 +15,4 @@ Vercel. A cloud platform for stable and automated deployment.
 
 # Deployment
 The project is configured for automated deployment. Every push to the main branch triggers a build on Vercel.
-Live Demo: https://smart-memorywall.vercel.app/gallery
+Live Demo: https://smart-memorywall.vercel.app/
