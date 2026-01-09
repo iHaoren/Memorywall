@@ -1,16 +1,18 @@
-# React + Vite
+# Memorywall
+Memorywall is a modern digital gallery platform. You can store and display visual memories through an interactive interface. This project utilizes high performance web technologies to ensure a seamless user experience.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Key Features
+Interactive Gallery. You can browse photos with smooth transitions and animations.
+Responsive Design. The layout adapts automatically to mobile, tablet, and desktop screens.
+Performance Optimized. The application uses lazy loading to ensure fast image rendering.
+Clean UI. The design prioritizes visual content with a minimalist aesthetic.
 
-Currently, two official plugins are available:
+# Tech Stack
+React. A JavaScript library for building dynamic user interfaces.
+Vite. A next generation frontend tool for fast development cycles.
+Tailwind CSS. A utility first CSS framework for rapid and consistent styling.
+Vercel. A cloud platform for stable and automated deployment.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Deployment
+The project is configured for automated deployment. Every push to the main branch triggers a build on Vercel.
+Live Demo: https://smart-memorywall.vercel.app/gallery
