@@ -22,11 +22,3 @@ CREATE TABLE IF NOT EXISTS comments (
 
 -- Index for faster queries on memory_id
 CREATE INDEX IF NOT EXISTS idx_comments_memory_id ON comments(memory_id);
-
--- Enable Row Level Security (RLS) if needed
--- ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
-
--- Policies for public access (adjust as needed for your app)
--- CREATE POLICY "Allow all operations on memories" ON memories FOR ALL USING (true);
--- CREATE POLICY "Allow all operations on comments" ON comments FOR ALL USING (true);
